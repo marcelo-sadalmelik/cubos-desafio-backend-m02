@@ -1,10 +1,12 @@
 const express = require('express');
 const validaSenha = require('./intermediarios');
-const { buscarContas } = require('./controladores/contas');
+const { buscarContas, criarConta } = require('./controladores/contas');
 
 const rotas = express();
 
+rotas.post('/contas', criarConta);
+
 rotas.use(validaSenha);
-rotas.use('/contas', buscarContas);
+rotas.get('/contas', buscarContas);
 
 module.exports = rotas;
