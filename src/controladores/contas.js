@@ -120,6 +120,26 @@ const atualizarConta = (req, res) => {
   return res.status(200).send();
 };
 
+const excluirConta = (req, res) => {
+  const numeroConta = Number(req.params.numeroConta);
+  const contaEncontrada = bancoDeDados.contas.find(
+    (conta) => conta.numero === numeroConta,
+  );
+  if (!contaEncontrada) {
+    return res.status(404).json({ mensagem: 'Conta não encontrada.' });
+  }
+  if (contaEncontrada.saldo !== 0) {
+    return res
+      .status(404)
+      .json({ mensagem: 'A conta só pode ser removida se o saldo for zero!' });
+  }
+  const index = bancoDeDados.contas.findIndex(
+    (conta) => conta.numero === numeroConta,
+  );
+  bancoDeDados.contas.splice(index, 1);
+  res.status(204).send();
+};
+
 function cpfEhValido(cpf) {
   return !bancoDeDados.contas.find((conta) => conta.usuario.cpf === cpf);
 }
@@ -132,4 +152,4 @@ function existeConta(numero) {
   return !!bancoDeDados.contas.find((conta) => conta.numero === numero);
 }
 
-module.exports = { buscarContas, criarConta, atualizarConta };
+module.exports = { buscarContas, criarConta, atualizarConta, excluirConta };
