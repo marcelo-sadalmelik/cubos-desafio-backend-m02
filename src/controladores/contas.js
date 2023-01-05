@@ -140,6 +140,15 @@ const excluirConta = (req, res) => {
   res.status(204).send();
 };
 
+const consultarSaldo = (req, res) => {
+  const numero_conta = Number(req.query.numero_conta);
+  const conta = bancoDeDados.contas.find(
+    (conta) => conta.numero === numero_conta,
+  );
+
+  return res.status(200).json({ saldo: conta.saldo });
+};
+
 function cpfEhValido(cpf) {
   return !bancoDeDados.contas.find((conta) => conta.usuario.cpf === cpf);
 }
@@ -152,4 +161,10 @@ function existeConta(numero) {
   return !!bancoDeDados.contas.find((conta) => conta.numero === numero);
 }
 
-module.exports = { buscarContas, criarConta, atualizarConta, excluirConta };
+module.exports = {
+  buscarContas,
+  criarConta,
+  atualizarConta,
+  excluirConta,
+  consultarSaldo,
+};
