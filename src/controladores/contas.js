@@ -1,4 +1,5 @@
 const bancoDeDados = require('../dados/bancodedados');
+const { buscarConta } = require('../utilitarios');
 const buscarContas = (req, res) => {
   res.status(200).json(bancoDeDados.contas);
 };
@@ -149,6 +150,32 @@ const consultarSaldo = (req, res) => {
   return res.status(200).json({ saldo: conta.saldo });
 };
 
+const consultarExtrato = (req, res) => {
+  const numero_conta = Number(req.query.numero_conta);
+
+  const depositos = bancoDeDados.depositos.filter(
+    (deposito) => deposito.numero_conta === numero_conta,
+  );
+  const saques = bancoDeDados.saques.filter(
+    (saque) => saque.numero_conta === numero_conta,
+  );
+  const transferenciasEnviadas = bancoDeDados.transferencias.filter(
+    (transferencia) => transferencia.numero_conta_origem === numero_conta,
+  );
+  const transferenciasRecebidas = bancoDeDados.transferencias.filter(
+    (transferencia) => transferencia.numero_conta_destino === numero_conta,
+  );
+
+  const resposta = {
+    depositos,
+    saques,
+    transferenciasEnviadas,
+    transferenciasRecebidas,
+  };
+
+  return res.status(200).json(resposta);
+};
+
 function cpfEhValido(cpf) {
   return !bancoDeDados.contas.find((conta) => conta.usuario.cpf === cpf);
 }
@@ -167,4 +194,5 @@ module.exports = {
   atualizarConta,
   excluirConta,
   consultarSaldo,
+  consultarExtrato,
 };

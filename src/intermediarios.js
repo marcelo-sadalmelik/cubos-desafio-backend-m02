@@ -1,5 +1,4 @@
 const bancoDeDados = require('./dados/bancodedados');
-const { contas } = require('./dados/bancodedados');
 const { buscarConta } = require('./utilitarios');
 
 const validaSenha = (req, res, next) => {
@@ -18,6 +17,11 @@ const validaContaESenha = (req, res, next) => {
 
   const conta = buscarConta(numero_conta, bancoDeDados.contas);
 
+  if (!numero_conta || !senha) {
+    return res.status(400).json({
+      mensagem: `Os campos 'numero_conta' e 'senha' são obrigatórios`,
+    });
+  }
   if (!conta) {
     return res.status(404).json({ mensagem: 'Conta bancária não encontada!' });
   }
@@ -51,6 +55,12 @@ const validaSaque = (req, res, next) => {
   const senha = req.body.senha;
 
   const conta = buscarConta(numero_conta, bancoDeDados.contas);
+
+  if (!numero_conta || !valor || !senha) {
+    return res.status(400).json({
+      mensagem: `Os campos 'numero_conta', 'valor' e 'senha' são obrigatórios.`,
+    });
+  }
 
   if (!conta) {
     return res.status(404).json({ mensagem: 'Conta não encontrada.' });

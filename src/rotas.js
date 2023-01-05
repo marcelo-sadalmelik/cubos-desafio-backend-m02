@@ -11,6 +11,7 @@ const {
   atualizarConta,
   excluirConta,
   consultarSaldo,
+  consultarExtrato,
 } = require('./controladores/contas');
 const { depositar, sacar } = require('./controladores/transacoes');
 
@@ -21,6 +22,7 @@ rotas.put('/contas/:numeroConta/usuario', atualizarConta);
 rotas.delete('/contas/:numeroConta', excluirConta);
 
 rotas.get('/contas/saldo', validaContaESenha, consultarSaldo);
+rotas.get('/contas/extrato', validaContaESenha, consultarExtrato);
 
 rotas.post('/transacoes/depositar', validaDeposito, depositar);
 rotas.post('/transacoes/sacar', validaSaque, sacar);
