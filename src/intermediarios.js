@@ -27,4 +27,24 @@ const validaContaESenha = (req, res, next) => {
   next();
 };
 
-module.exports = { validaSenha, validaContaESenha };
+const validaDeposito = (req, res, next) => {
+  const numero_conta = Number(req.body.numero_conta);
+  const valor = Number(req.body.valor);
+
+  const conta = bancoDeDados.contas.find(
+    (conta) => conta.numero === numero_conta,
+  );
+
+  if (!conta) {
+    return res.status(404).json({ mensagem: 'Conta não encontrada.' });
+  }
+  if (!valor || valor < 0) {
+    return res.status(400).json({
+      mensagem: 'O campo valor precisa ser informado com valor maior que 0.',
+    });
+  }
+
+  next();
+};
+
+module.exports = { validaSenha, validaContaESenha, validaDeposito };
