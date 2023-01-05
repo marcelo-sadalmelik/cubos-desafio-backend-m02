@@ -1,5 +1,6 @@
 const bancoDeDados = require('./dados/bancodedados');
 const { contas } = require('./dados/bancodedados');
+const { buscarConta } = require('./utilitarios');
 
 const validaSenha = (req, res, next) => {
   const { senha_banco } = req.query;
@@ -15,13 +16,12 @@ const validaContaESenha = (req, res, next) => {
   const numero_conta = Number(req.query.numero_conta);
   const senha = req.query.senha;
 
-  const contaEncontrada = bancoDeDados.contas.find(
-    (conta) => conta.numero === numero_conta,
-  );
-  if (!contaEncontrada) {
+  const conta = buscarConta(numero_conta, bancoDeDados.contas);
+
+  if (!conta) {
     return res.status(404).json({ mensagem: 'Conta bancária não encontada!' });
   }
-  if (contaEncontrada.usuario.senha !== senha) {
+  if (conta.usuario.senha !== senha) {
     return res.status(401).json({ mensagem: 'Senha inválida.' });
   }
   next();
@@ -31,9 +31,7 @@ const validaDeposito = (req, res, next) => {
   const numero_conta = Number(req.body.numero_conta);
   const valor = Number(req.body.valor);
 
-  const conta = bancoDeDados.contas.find(
-    (conta) => conta.numero === numero_conta,
-  );
+  const conta = buscarConta(numero_conta, bancoDeDados.contas);
 
   if (!conta) {
     return res.status(404).json({ mensagem: 'Conta não encontrada.' });
@@ -52,9 +50,7 @@ const validaSaque = (req, res, next) => {
   const valor = Number(req.body.valor);
   const senha = req.body.senha;
 
-  const conta = bancoDeDados.contas.find(
-    (conta) => conta.numero === numero_conta,
-  );
+  const conta = buscarConta(numero_conta, bancoDeDados.contas);
 
   if (!conta) {
     return res.status(404).json({ mensagem: 'Conta não encontrada.' });

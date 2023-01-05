@@ -5,6 +5,11 @@ const formatarData = (date) => {
   });
 };
 
+const buscarConta = (numero_conta, contas) => {
+  return contas.find((conta) => conta.numero === numero_conta);
+};
+
 module.exports = {
   formatarData,
+  buscarConta,
 };
