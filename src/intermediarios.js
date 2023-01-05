@@ -82,9 +82,52 @@ const validaSaque = (req, res, next) => {
   next();
 };
 
+const validaTransferencia = (req, res, next) => {
+  const numero_conta_origem = Number(req.body.numero_conta_origem);
+  const numero_conta_destino = Number(req.body.numero_conta_destino);
+  const valor = Number(req.body.valor);
+  const senha = req.body.senha;
+
+  const contaOrigem = buscarConta(numero_conta_origem, bancoDeDados.contas);
+  const contaDestino = buscarConta(numero_conta_destino, bancoDeDados.contas);
+
+  if (!(numero_conta_origem && numero_conta_destino && valor && senha)) {
+    return res.status(400).json({
+      mensagem: `Os campos 'numero_conta_origem', 'numero_conta_destino', 'valor' e 'senha' são obrigatórios.`,
+    });
+  }
+
+  if (!contaOrigem) {
+    return res
+      .status(404)
+      .json({ mensagem: 'Conta de origem não encontrada.' });
+  }
+  if (!contaDestino) {
+    return res
+      .status(404)
+      .json({ mensagem: 'Conta de destino não encontrada.' });
+  }
+  if (contaOrigem.usuario.senha !== senha) {
+    return res.status(401).json({ mensagem: 'Senha inválida.' });
+  }
+  if (valor < 0) {
+    return res.status(400).json({
+      mensagem: 'O valor informado precisa ser maior que 0.',
+    });
+  }
+  if (valor > contaOrigem.saldo) {
+    return res.status(400).json({
+      mensagem: 'Saldo insuficiente.',
+    });
+  }
+
+  next();
+};
+
 module.exports = {
   validaSenha,
   validaContaESenha,
   validaDeposito,
   validaSaque,
+  validaTransferencia,
 };
