@@ -40,11 +40,45 @@ const validaDeposito = (req, res, next) => {
   }
   if (!valor || valor < 0) {
     return res.status(400).json({
-      mensagem: 'O campo valor precisa ser informado com valor maior que 0.',
+      mensagem: 'O valor informado precisa ser maior que 0.',
     });
   }
 
   next();
 };
 
-module.exports = { validaSenha, validaContaESenha, validaDeposito };
+const validaSaque = (req, res, next) => {
+  const numero_conta = Number(req.body.numero_conta);
+  const valor = Number(req.body.valor);
+  const senha = req.body.senha;
+
+  const conta = bancoDeDados.contas.find(
+    (conta) => conta.numero === numero_conta,
+  );
+
+  if (!conta) {
+    return res.status(404).json({ mensagem: 'Conta não encontrada.' });
+  }
+  if (conta.usuario.senha !== senha) {
+    return res.status(401).json({ mensagem: 'Senha inválida.' });
+  }
+  if (!valor || valor < 0) {
+    return res.status(400).json({
+      mensagem: 'O valor informado precisa ser maior que 0.',
+    });
+  }
+  if (valor > conta.saldo) {
+    return res.status(400).json({
+      mensagem: 'Saldo insuficiente.',
+    });
+  }
+
+  next();
+};
+
+module.exports = {
+  validaSenha,
+  validaContaESenha,
+  validaDeposito,
+  validaSaque,
+};

@@ -3,6 +3,7 @@ const {
   validaSenha,
   validaContaESenha,
   validaDeposito,
+  validaSaque,
 } = require('./intermediarios');
 const {
   buscarContas,
@@ -11,7 +12,7 @@ const {
   excluirConta,
   consultarSaldo,
 } = require('./controladores/contas');
-const { depositar } = require('./controladores/transacoes');
+const { depositar, sacar } = require('./controladores/transacoes');
 
 const rotas = express();
 
@@ -22,6 +23,7 @@ rotas.delete('/contas/:numeroConta', excluirConta);
 rotas.get('/contas/saldo', validaContaESenha, consultarSaldo);
 
 rotas.post('/transacoes/depositar', validaDeposito, depositar);
+rotas.post('/transacoes/sacar', validaSaque, sacar);
 
 rotas.use(validaSenha);
 rotas.get('/contas', buscarContas);
